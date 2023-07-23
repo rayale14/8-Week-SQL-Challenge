@@ -189,6 +189,13 @@ Data issues in the existing schema include:
 - Saving the transformations in a temporary table
   - We want to avoid permanently changing the raw data via ```UPDATE``` commands if possible.
 
+```TSQL
+SET SQL_SAFE_UPDATES = 0;
+UPDATE customer_orders
+SET exclusions = '', extras = ''
+WHERE (exclusions IS NULL OR exclusions='null')
+and (extras IS NULL OR extras='null');
+
 **```runner_orders```**
 
 - Converting ```'null'``` text values into null values for ```pickup_time```, ```distance``` and ```duration```
