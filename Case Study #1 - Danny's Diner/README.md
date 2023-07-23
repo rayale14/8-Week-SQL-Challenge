@@ -91,7 +91,7 @@ The final members table captures the ```join_date``` when a ```customer_id``` jo
 
 ## 🧙‍♂️ Case Study Questions
 <p align="center">
-<img src="https://media3.giphy.com/media/JQXKbzdLTQJJKP176X/giphy.gif" width=80% height=80%>
+<img src="https://giphy.com/gifs/season-13-the-simpsons-13x22-3orifdc6hhLcRDDCuc" width=80% height=80%>
 
 1. What is the total amount each customer spent at the restaurant?
 2. How many days has each customer visited the restaurant?
