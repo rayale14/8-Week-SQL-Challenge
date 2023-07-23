@@ -1,3 +1,10 @@
+--------------------------------
+--CASE STUDY #1: DANNY'S DINER--
+--------------------------------
+--Author: Duyen Huong Le
+--Date: 07/17/2022
+--Tool used: MySQL
+
 CREATE SCHEMA dannys_diner;
 SET search_path = dannys_diner;
 
