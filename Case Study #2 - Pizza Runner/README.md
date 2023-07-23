@@ -195,6 +195,7 @@ UPDATE customer_orders
 SET exclusions = '', extras = ''
 WHERE (exclusions IS NULL OR exclusions='null')
 and (extras IS NULL OR extras='null');
+```
 
 **```runner_orders```**
 
