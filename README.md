@@ -1,5 +1,3 @@
-![Star Badge](https://img.shields.io/static/v1?label=%F0%9F%8C%9F&message=If%20Useful&style=style=flat&color=BC4E99)
-![Open Source Love](https://badges.frapsoft.com/os/v1/open-source.svg?v=103)
 [![View My Profile](https://img.shields.io/badge/View-My_Profile-green?logo=GitHub)](https://github.com/ndleah)
 [![View Repositories](https://img.shields.io/badge/View-My_Repositories-blue?logo=GitHub)](https://github.com/ndleah?tab=repositories)
 
@@ -9,20 +7,15 @@
 > 
 > All case study's requirements and resources are available on the challenge [website](https://8weeksqlchallenge.com).
 
-<p align="center">
-  <img src="https://forthebadge.com/images/badges/built-with-love.svg">
-  <img src="https://forthebadge.com/images/badges/powered-by-coffee.svg">
-</p>
-
-<p align="center">
-  <img src="https://forthebadge.com/images/badges/check-it-out.svg">
-</p>
-
 ## 📕  Table Of Contents
 * [🍜 Case Study #1 - Danny's Diner](#-case-study-1---dannys-diner)
 * [🍕 Case Study #2 - Pizza Runner](#-case-study-2---pizza-runner)
 * [🥑 Case Study #3 - Foodie-Fi](#-case-study-3---foodie-fi)
 * [🪙 Case Study #4 - Data Bank](#-case-study-4---data-bank)
+* [🪙 Case Study #5 - Data Mart](#-case-study-4---data-mart)
+* [🪙 Case Study #6 - Clique Bait](#-case-study-4---clique-bait)
+* [🪙 Case Study #7 - Balance Tree Clothing Co](#-case-study-4---balance-tree-clothing-co)
+* [🪙 Case Study #8 - Fresh Segments](#-case-study-4---fresh-segments)
 
 ---
 
