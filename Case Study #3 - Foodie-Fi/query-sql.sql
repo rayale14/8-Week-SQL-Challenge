@@ -18,22 +18,22 @@ WHERE
     customer_id IN (1 , 2, 11, 13, 15, 16, 18, 19);
 
 #BRIEF
-Customer 1: Signed up for a 7-day free trial on 01/08/2020. Automatically upgraded to the basic monthly plan on 08/08/2020.
+-- Customer 1: Signed up for a 7-day free trial on 01/08/2020. Automatically upgraded to the basic monthly plan on 08/08/2020.
 
-Customer 2: Signed up for a 7-day free trial on 20/09/2020. Upgraded to the pro annual plan on 27/09/2020.
+-- Customer 2: Signed up for a 7-day free trial on 20/09/2020. Upgraded to the pro annual plan on 27/09/2020.
 
-Customer 11: Signed up for a 7-day free trial on 19/11/2020. Cancelled the subscription on 26/11/2020.
+-- Customer 11: Signed up for a 7-day free trial on 19/11/2020. Cancelled the subscription on 26/11/2020.
 
-Customer 13: Signed up for a 7-day free trial on 15/12/2020. Automatically upgraded to the basic monthly plan on 22/12/2020. Upgraded to the pro monthly plan on 29/03/2020.
+-- Customer 13: Signed up for a 7-day free trial on 15/12/2020. Automatically upgraded to the basic monthly plan on 22/12/2020. Upgraded to the pro monthly plan on 29/03/2020.
 
-Customer 15: Signed up for a 7-day free trial on 17/03/2020. Automatically upgraded to the basic monthly plan on 24/03/2020. Cancelled the subscription on 29/03/2020.
+-- Customer 15: Signed up for a 7-day free trial on 17/03/2020. Automatically upgraded to the basic monthly plan on 24/03/2020. Cancelled the subscription on 29/03/2020.
 
-Customer 16: Signed up for a 7-day free trial on 31/05/2020. Automatically upgraded to the basic monthly plan on 07/06/2020. Upgraded to the pro annual plan on 21/10/2020.
+-- Customer 16: Signed up for a 7-day free trial on 31/05/2020. Automatically upgraded to the basic monthly plan on 07/06/2020. Upgraded to the pro annual plan on 21/10/2020.
 
-Customer 18: Signed up for a 7-day free trial on 06/07/2020. Upgraded to the pro monthly plan on 13/07/2020.
+-- Customer 18: Signed up for a 7-day free trial on 06/07/2020. Upgraded to the pro monthly plan on 13/07/2020.
 
-Customer 19: Signed up for a 7-day free trial on 22/06/2020. Upgraded to the pro monthly plan on 29/06/2020. Upgraded to the pro annual plan on 29/08/2020.
-*/
+-- Customer 19: Signed up for a 7-day free trial on 22/06/2020. Upgraded to the pro monthly plan on 29/06/2020. Upgraded to the pro annual plan on 29/08/2020.
+
 
 
 #B. Data Analysis Questions
