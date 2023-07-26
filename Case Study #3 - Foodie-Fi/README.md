@@ -1,8 +1,8 @@
-# [8-Week SQL Challenge](https://github.com/ndleah/8-Week-SQL-Challenge)
+# [8-Week SQL Challenge](https://github.com/rayale14/8-Week-SQL-Challenge) 
 ![Star Badge](https://img.shields.io/static/v1?label=%F0%9F%8C%9F&message=If%20Useful&style=style=flat&color=BC4E99)
-[![View Main Folder](https://img.shields.io/badge/View-Main_Folder-971901?)](https://github.com/ndleah/8-Week-SQL-Challenge)
-[![View Repositories](https://img.shields.io/badge/View-My_Repositories-blue?logo=GitHub)](https://github.com/ndleah?tab=repositories)
-[![View My Profile](https://img.shields.io/badge/View-My_Profile-green?logo=GitHub)](https://github.com/ndleah)
+[![View Main Folder](https://img.shields.io/badge/View-Main_Folder-971901?)](https://github.com/rayale14/8-Week-SQL-Challenge)
+[![View Repositories](https://img.shields.io/badge/View-My_Repositories-blue?logo=GitHub)](https://github.com/rayale14?tab=repositories)
+[![View My Profile](https://img.shields.io/badge/View-My_Profile-green?logo=GitHub)](https://github.com/rayale14)
 
 
 # 🥑 Case Study #3 - Foodie-Fi
@@ -10,12 +10,12 @@
 <img src="https://github.com/ndleah/8-Week-SQL-Challenge/blob/main/IMG/org-3.png" width=40% height=40%>
 
 ## 📕 Table Of Contents
-  - 🛠️ [Problem Statement](#problem-statement)
-  - 📂 [Dataset](#dataset)
-  - 🧙‍♂️ [Case Study Questions](#case-study-questions)
-  - 🚀 [Solutions](#-solutions)
+* 🛠️ [Business Task](#business-task)
+* 📂 [Dataset](#dataset)
+* 🧙‍♂️ [Case Study Questions](#case-study-questions)
+* 🚀 [Solutions](#solutions)
 
-## 🛠️ Problem Statement
+## 🛠️ Business Task
 
 Danny finds a few smart friends to launch his new startup Foodie-Fi in 2020 and started selling monthly and annual subscriptions, giving their customers unlimited on-demand access to exclusive food videos from around the world!
 
@@ -111,12 +111,14 @@ In this part, I will display the first 20 rows of this dataset since the origina
 
 **Q1. How many customers has Foodie-Fi ever had?**
 ```SQL
-SELECT COUNT(DISTINCT customer_id) AS total_customers
-FROM foodie_fi.subscriptions;
+SELECT 
+    COUNT(DISTINCT customer_id) AS no_customers
+FROM
+    subscriptions;
 ```
 
 
-| total_customers |
+| no_customers |
 |-------------------|
 | 1000              |
 
@@ -124,14 +126,19 @@ FROM foodie_fi.subscriptions;
 **Q2. What plan start_date values occur after the year 2020 for our dataset? Show the breakdown by count of events for each ```plan_name**
 
 ```SQL
-SELECT EXTRACT(MONTH FROM start_date) AS months, COUNT(*)
-FROM foodie_fi.subscriptions
-WHERE plan_id = 0
-GROUP BY months
-ORDER BY months;
+SELECT 
+    MONTH(s.start_date) AS plan_month, COUNT(*) AS dist_values
+FROM
+    plans p
+        JOIN
+    subscriptions s ON p.plan_id = s.plan_id
+WHERE
+    p.plan_id = 0
+GROUP BY 1
+ORDER BY 1;
 ```
 
-months | count 
+plan_months | dist_values 
 -------|-------
    1 |    88
    2 |    68
@@ -150,42 +157,41 @@ months | count
 
 **Q3. What plan start_date values occur after the year 2020 for our dataset? Show the breakdown by count of events for each plan_name**
 ```SQL
-SELECT plan_id, COUNT(*)
-FROM foodie_fi.subscriptions
-WHERE start_date > '2020-01-01'::DATE
-GROUP BY plan_id
-ORDER BY plan_id;
+SELECT 
+    plan_name,
+    YEAR(s.start_date) AS events,
+    COUNT(*) AS count_of_events
+FROM
+    subscriptions s
+        JOIN
+    plans p ON s.plan_id = p.plan_id
+WHERE
+    YEAR(s.start_date) > 2020
+GROUP BY 2 , 1;
 ```
 
-plan_id | count 
---------|-------
- 0 |   997
- 1 |   546
-  2 |   539
- 3 |   258
-   4 |   307
+plan_name |events| count_of_events 
+--------|-------|-------
+ churn | 2021|  71
+ pro monthly |2021|   60
+pro annual | 2021|   63
+ basic monthly| 2021| 8
+ 
 
 ---
 
 **Q4. What is the customer count and percentage of customers who have churned rounded to 1 decimal place?**
 ```SQL
-DROP TABLE IF EXISTS total_count;
-CREATE TEMP TABLE total_count AS (
-    SELECT COUNT(DISTINCT customer_id) AS num
-    FROM foodie_fi.subscriptions
-);
-
-WITH churn_count AS (
-    SELECT COUNT(DISTINCT customer_id) AS num
-    FROM foodie_fi.subscriptions
-    WHERE plan_id = 4
-)
-SELECT churn_count.num AS num_churned,
-       churn_count.num::FLOAT  / total_count.num::FLOAT *100 AS percent_churned
-FROM churn_count, total_count;
+SELECT 
+  SUM(CASE WHEN p.plan_name = 'churn' THEN 1 ELSE 0 END) AS no_churn,
+  Round(100 * SUM(CASE WHEN p.plan_name = 'churn' THEN 1 ELSE 0 END),1) 
+    / COUNT(DISTINCT s.customer_id) AS churn_pct
+FROM subscriptions s
+JOIN plans p 
+  ON s.plan_id = p.plan_id;
 ```
 
-num_churned | percent_churned 
+no_churn | churn_pct
 -------------|-----------------
   307 |            30.7
 
@@ -193,175 +199,38 @@ num_churned | percent_churned
 
 **Q5. How many customers have churned straight after their initial free trial what percentage is this rounded to the nearest whole number?**
 ```SQL
-DROP TABLE IF EXISTS next_plan_cte;
-CREATE TEMP TABLE next_plan_cte AS(
-    SELECT *, 
-        LEAD(plan_id, 1) 
-        OVER(PARTITION BY customer_id ORDER BY start_date) as next_plan
-    FROM foodie_fi.subscriptions
-);
 
-WITH direct_churner_cte AS (
-    SELECT COUNT(DISTINCT customer_id) AS direct_churner
-    FROM next_plan_cte
-    WHERE plan_id = 0 AND next_plan = 4
-)
-
-SELECT direct_churner, direct_churner::FLOAT/num::FLOAT * 100 AS percent_churned
-FROM direct_churner_cte, total_count;
 ```
-
-
-  direct_churner | percent_churned 
- ----------------|-----------------
- 92 |             9.2
 
 
 **Q6. What is the number and percentage of customer plans after their initial free trial?**
 ```SQL
-DROP TABLE IF EXISTS current_plan_count;
-CREATE TEMP TABLE current_plan_count AS (
-    SELECT plan_id, COUNT(DISTINCT customer_id) AS num
-    FROM foodie_fi.subscriptions
-    GROUP BY plan_id
-);
 
-WITH conversions AS (
-    SELECT next_plan, COUNT(*) AS total_conversions
-    FROM next_plan_cte
-    WHERE next_plan IS NOT NULL AND plan_id = 0
-    GROUP BY next_plan
-    ORDER BY next_plan
-)
-
-SELECT current_plan_count.plan_id, total_conversions, num,
-        ROUND(CAST(total_conversions::FLOAT / num::FLOAT * 100 AS NUMERIC), 2) AS percent_directly_converted
-FROM current_plan_count JOIN conversions
-    ON current_plan_count.plan_id = conversions.next_plan;
 ```
-
-plan_id | total_conversions | num | percent_directly_converted 
--------------|-------------------|-----|----------------------------
-   1 |               546 | 546 |                     100.00
-   2 |               325 | 539 |                      60.30
-   3 |                37 | 258 |                      14.34
-   4 |                92 | 307 |                      29.97
 
 
 **Q7. What is the customer count and percentage breakdown of all 5 plan_name values at 2020-12-31?**
 ```SQL
-WITH next_date_cte AS (
-    SELECT *,
-            LEAD (start_date, 1) OVER (PARTITION BY customer_id ORDER BY start_date) AS next_date
-    FROM foodie_fi.subscriptions
-),
-customers_on_date_cte AS (
-    SELECT plan_id, COUNT(DISTINCT customer_id) AS customers
-    FROM next_date_cte
-    WHERE (next_date IS NOT NULL AND ('2020-12-31'::DATE > start_date AND '2020-12-31'::DATE < next_date))
-        OR (next_date IS NULL AND '2020-12-31'::DATE > start_date)
-    GROUP BY plan_id
-)
-
-SELECT plan_id, customers, ROUND(CAST(customers::FLOAT / num::FLOAT * 100 AS NUMERIC), 2) AS percent
-FROM customers_on_date_cte, total_count;
 ```
-
- plan_id | customers | percent 
- ---------|-----------|---------
-   0 |        19 |    1.90
-   1 |       224 |   22.40
-   2 |       326 |   32.60
-   3 |       195 |   19.50
-   4 |       235 |   23.50
-
 
 **Q8. How many customers have upgraded to an annual plan in 2020?**
 ```SQL
-SELECT COUNT(DISTINCT customer_id)
-FROM next_plan_cte
-WHERE next_plan=3 AND EXTRACT(YEAR FROM start_date) = '2020';
 ```
-
-|count |
-|------|
-|253 |
 
 **Q9. How many days on average does it take for a customer to an annual plan from the day they join Foodie-Fi?**
 ```SQL
--- This will only find the average of people who have upgraded to annual plan
-WITH join_date AS (
-    SELECT customer_id, start_date 
-    FROM foodie_fi.subscriptions 
-    WHERE plan_id = 0
-),
-pro_date AS (
-    SELECT customer_id, start_date AS upgrade_date 
-    FROM foodie_fi.subscriptions 
-    WHERE plan_id = 3
-)
-
-SELECT ROUND(AVG(upgrade_date - start_date), 2) AS avg_days_to_upgrade
-FROM join_date JOIN pro_date
-    ON join_date.customer_id = pro_date.customer_id;
 ```
-
-|avg_days_to_upgrade|
-|-------------------|
-|104.62             |
 
 
 **Q10. Can you further breakdown this average value into 30 day periods (i.e. 0-30 days, 31-60 days etc)**
 ```SQL
-WITH join_date AS (
-    SELECT customer_id, start_date 
-    FROM foodie_fi.subscriptions 
-    WHERE plan_id = 0
-),
-pro_date AS (
-    SELECT customer_id, start_date AS upgrade_date 
-    FROM foodie_fi.subscriptions 
-    WHERE plan_id = 3
-),
-bins AS (
-    SELECT WIDTH_BUCKET(upgrade_date - start_date, 0, 360, 12) AS avg_days_to_upgrade
-    FROM join_date JOIN pro_date
-        ON join_date.customer_id = pro_date.customer_id
-)
-
-SELECT ((avg_days_to_upgrade - 1)*30 || '-' || (avg_days_to_upgrade)*30) AS "30-day-range", COUNT(*)
-FROM bins
-GROUP BY avg_days_to_upgrade
-ORDER BY avg_days_to_upgrade;
 ```
-
-|  30-day-range  |  count  |
-|----------------|---------|
-| 0-30         | 48      |
-| 30-60        | 25      |
-| 60-90        | 33      |
-| 90-120       | 35      |
-| 120-150      | 43      |
-| 150-180      | 35      |
-| 180-210      | 27      |
-| 210-240      | 4       |
-| 240-270      | 5       |
-| 270-300      | 1       |
-| 300-330      | 1       |
-| 330-360      | 1       |
-
 
 
 **Q11. How many customers downgraded from a pro monthly to a basic monthly plan in 2020?**
 
 ```SQL
-SELECT COUNT(*) AS customers_downgraded
-FROM next_plan_cte
-WHERE plan_id=2 AND next_plan=1;
 ```
-|customers_downgraded|
-|--------------------|
-| 0                  |
 
 ---
-<p>&copy; 2021 Leah Nguyen</p>
+<p>&copy; 2023 Duyen Huong Le</p>
