@@ -10,14 +10,13 @@
 <img src="https://github.com/ndleah/8-Week-SQL-Challenge/blob/main/IMG/org-2.png" width=40% height=40%>
 
 ## 📕 Table Of Contents
-  - 🛠️ [Problem Statement](#problem-statement)
+  - 🛠️ [Business Task](#business-task)
   - 📂 [Dataset](#dataset)
-  - ♻️ [Data Preprocessing](#️-data-preprocessing)
   - 🚀 [Solutions](#-solutions)
 
 ---
 
-## 🛠️ Problem Statement
+## 🛠️ Business Task
 
 > Danny was scrolling through his Instagram feed when something really caught his eye - “80s Retro Styling and Pizza Is The Future!”
 > 
@@ -162,94 +161,6 @@ This table contains all of the **```topping_name```** values with their correspo
 |10        |Salami      | 
 |11        |Tomatoes    | 
 |12        |Tomato Sauce|
-
-</details>
-
----
-
-## ♻️ Data Preprocessing
-
-### **Data Issues**
-
-Data issues in the existing schema include:
-
-* **```customer_orders``` table**
-  - ```null``` values entered as text
-  - using both ```NaN``` and ```null``` values
-* **```runner_orders``` table**
-  - ```null``` values entered as text
-  - using both ```NaN``` and ```null``` values
-  - units manually entered in ```distance``` and ```duration``` columns
-
-### **Data Cleaning**
-
-**```customer_orders```**
-- Converting ```null``` and ```NaN``` values into blanks ```''``` in ```exclusions``` and ```extras```
-  - Blanks indicate that the customer requested no extras/exclusions for the pizza, whereas ```null``` values would be ambiguous.
-- Saving the transformations in a temporary table
-  - We want to avoid permanently changing the raw data via ```UPDATE``` commands if possible.
-
-```TSQL
-SET SQL_SAFE_UPDATES = 0;
-UPDATE customer_orders
-SET exclusions = '', extras = ''
-WHERE (exclusions IS NULL OR exclusions='null')
-and (extras IS NULL OR extras='null');
-```
-
-**```runner_orders```**
-
-- Converting ```'null'``` text values into null values for ```pickup_time```, ```distance``` and ```duration```
-- Extracting only numbers and decimal spaces for the distance and duration columns
-  - Use regular expressions and ```NULLIF``` to convert non-numeric entries to null values
-- Converting blanks, ```'null'``` and ```NaN``` into null values for cancellation
-- Saving the transformations in a temporary table
-
-> ⚠️ Access [here](https://github.com/ndleah/8-Week-SQL-Challenge/blob/main/Case%20Study%20%232%20-%20Pizza%20Runner/table-transform.sql) to view full solution.
-
-**Result:**
-
-<details>
-<summary> 
-updated_customer_orders
-</summary>
-
-|order_id|customer_id|pizza_id|exclusions|extras|order_time              |
-|--------|-----------|--------|----------|------|------------------------|
-|1       |101        |1       |          |      |2020-01-01T18:05:02.000Z|
-|2       |101        |1       |          |      |2020-01-01T19:00:52.000Z|
-|3       |102        |1       |          |      |2020-01-02T12:51:23.000Z|
-|3       |102        |2       |          |      |2020-01-02T12:51:23.000Z|
-|4       |103        |1       |4         |      |2020-01-04T13:23:46.000Z|
-|4       |103        |1       |4         |      |2020-01-04T13:23:46.000Z|
-|4       |103        |2       |4         |      |2020-01-04T13:23:46.000Z|
-|5       |104        |1       |          |1     |2020-01-08T21:00:29.000Z|
-|6       |101        |2       |          |      |2020-01-08T21:03:13.000Z|
-|7       |105        |2       |          |1     |2020-01-08T21:20:29.000Z|
-|8       |102        |1       |          |      |2020-01-09T23:54:33.000Z|
-|9       |103        |1       |4         |1, 5  |2020-01-10T11:22:59.000Z|
-|10      |104        |1       |          |      |2020-01-11T18:34:49.000Z|
-|10      |104        |1       |2, 6      |1, 4  |2020-01-11T18:34:49.000Z|
-
-</details>
-
-<details>
-<summary> 
-updated_runner_orders
-</summary>
-
-| order_id | runner_id | pickup_time         | distance | duration | cancellation            |
-|----------|-----------|---------------------|----------|----------|-------------------------|
-| 1        | 1         | 2020-01-01 18:15:34 | 20       | 32       |                         |
-| 2        | 1         | 2020-01-01 19:10:54 | 20       | 27       |                         |
-| 3        | 1         | 2020-01-02 00:12:37 | 13.4     | 20       |                         |
-| 4        | 2         | 2020-01-04 13:53:03 | 23.4     | 40       |                         |
-| 5        | 3         | 2020-01-08 21:10:57 | 10       | 15       |                         |
-| 6        | 3         |                     |          |          | Restaurant Cancellation |
-| 7        | 2         | 2020-01-08 21:30:45 | 25       | 25       |                         |
-| 8        | 2         | 2020-01-10 00:15:02 | 23.4     | 15       |                         |
-| 9        | 2         |                     |          |          | Customer Cancellation   |
-| 10       | 1         | 2020-01-11 18:50:20 | 10       | 10       |                         |
 
 </details>
 
@@ -620,8 +531,6 @@ GROUP BY 1;
 
 
 </details>
-
-[![View Data Exploration Folder]](https://github.com/rayale14/8-Week-SQL-Challenge/tree/main/Case%20Study%20%232%20-%20Pizza%20Runner/2.%20Runner%20and%20Customer%20Experience)
 
 ---
 <p>&copy; 2023 Duyen Le Huong <p>
