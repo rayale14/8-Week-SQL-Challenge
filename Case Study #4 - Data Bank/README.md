@@ -89,7 +89,6 @@ This table stores all customer deposits, withdrawals and purchases made using th
 
 ## 🧙‍♂️ Case Study Questions
 <p align="center">
-<img src="https://media3.giphy.com/media/JQXKbzdLTQJJKP176X/giphy.gif" width=80% height=80%>
 
 ### **A. Customer Nodes Exploration**
 1. How many unique nodes are there on the Data Bank system?
@@ -98,7 +97,6 @@ This table stores all customer deposits, withdrawals and purchases made using th
 4. How many days on average are customers reallocated to a different node?
 5. What is the median, 80th and 95th percentile for this same reallocation days metric for each region?
 
-[![View Data Exploration Folder](https://img.shields.io/badge/View-Solution-971901?style=for-the-badge&logo=GITHUB)](https://github.com/ndleah/8-Week-SQL-Challenge/tree/main/Case%20Study%20%232%20-%20Pizza%20Runner/1.%20Pizza%20Metrics)
 
 ### **B. Customer Transactions**
 
@@ -164,4 +162,4 @@ View solutions
 </details>
 
 ---
-<p>&copy; 2021 Leah Nguyen</p>
+<p>&copy; 2023 Duyen Huong Le</p>
