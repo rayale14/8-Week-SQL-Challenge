@@ -1,7 +1,7 @@
-[![View My Profile](https://img.shields.io/badge/View-My_Profile-green?logo=GitHub)](https://github.com/ndleah)
-[![View Repositories](https://img.shields.io/badge/View-My_Repositories-blue?logo=GitHub)](https://github.com/ndleah?tab=repositories)
+[![View My Profile](https://img.shields.io/badge/View-My_Profile-green?logo=GitHub)](https://github.com/rayale14)
+[![View Repositories](https://img.shields.io/badge/View-My_Repositories-blue?logo=GitHub)](https://github.com/rayale14?tab=repositories)
 
-# [8-Week SQL Challenge](https://8weeksqlchallenge.com) <img src="https://s3.amazonaws.com/thinkific-import/357412/n0nS0vA3RmOtzsH99jyf_Data_With_Danny_Round_Logo_png" align="right" width="120" />
+# [8-Week SQL Challenge](https://8weeksqlchallenge.com) 
 
 > This repository contains all of my code submissions for the **#8WeekSQLChallenge**! 
 > 
@@ -10,18 +10,18 @@
 ## 📕  Table Of Contents
 * [🍜 Case Study #1 - Danny's Diner](#-case-study-1---dannys-diner)
 * [🍕 Case Study #2 - Pizza Runner](#-case-study-2---pizza-runner)
-* [🥑 Case Study #3 - Foodie-Fi](#-case-study-3---foodie-fi)
-* [🪙 Case Study #4 - Data Bank](#-case-study-4---data-bank)
-* [🪙 Case Study #5 - Data Mart](#-case-study-4---data-mart)
-* [🪙 Case Study #6 - Clique Bait](#-case-study-4---clique-bait)
-* [🪙 Case Study #7 - Balance Tree Clothing Co](#-case-study-4---balance-tree-clothing-co)
-* [🪙 Case Study #8 - Fresh Segments](#-case-study-4---fresh-segments)
+* [🥑 Case Study #3 - Foodie-Fi (updating)](#-case-study-3---foodie-fi)
+* [🪙 Case Study #4 - Data Bank (coming soon)](#-case-study-4---data-bank)
+* [🪙 Case Study #5 - Data Mart (coming soon)](#-case-study-4---data-mart)
+* [🪙 Case Study #6 - Clique Bait (coming soon)](#-case-study-4---clique-bait)
+* [🪙 Case Study #7 - Balance Tree Clothing Co (coming soon)](#-case-study-4---balance-tree-clothing-co)
+* [🪙 Case Study #8 - Fresh Segments (coming soon)](#-case-study-4---fresh-segments)
 
 ---
 
 ## 🍜 Case Study #1 - Danny's Diner
 <p align="center">
-  <img width=40% height=40%" src="/IMG/1.png">
+  <img width=40% height=40%" src="/IMG/org-1.png">
 
 Danny seriously loves Japanese food so in the beginning of 2021, he decides to embark upon a risky venture and opens up a cute little restaurant that sells his 3 favourite foods: sushi, curry and ramen.
 
@@ -36,7 +36,7 @@ Danny’s Diner is in need of your assistance to help the restaurant stay afloat
 
 ## 🍕 Case Study #2 - Pizza Runner
 <p align="center">
-  <img width=40% height=40%" src="/IMG/2.png">
+  <img width=40% height=40%" src="/IMG/org-2.png">
 
 Danny was scrolling through his Instagram feed when something really caught his eye - “80s Retro Styling and Pizza Is The Future!”
 
@@ -53,7 +53,7 @@ Danny started by recruiting “runners” to deliver fresh pizza from Pizza Runn
 
 ## 🥑 Case Study #3 - Foodie-Fi
 <p align="center">
-  <img width=40% height=40%" src="/IMG/3.png">
+  <img width=40% height=40%" src="/IMG/org-3.png">
 
 Subscription based businesses are super popular and Danny realised that there was a large gap in the market - he wanted to create a new streaming service that only had food related content - something like Netflix but with only cooking shows!
 
@@ -69,7 +69,7 @@ Danny created Foodie-Fi with a data driven mindset and wanted to ensure all futu
 
 ## 🪙 Case Study #4 - Data Bank
 <p align="center">
-  <img width=40% height=40%" src="/IMG/4.png">
+  <img width=40% height=40%" src="/IMG/org-4.png">
 
 There is a new innovation in the financial industry called Neo-Banks: new aged digital only banks without physical branches.
 
@@ -100,4 +100,4 @@ To contribute to this project, see the GitHub documentation on **[creating a pul
 Give a ⭐️ if you like this project!
 ___________________________________
 
-<p>&copy; 2021 Leah Nguyen</p>
+<p>&copy; 2023 Duyen H Le</p>
