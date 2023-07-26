@@ -1,11 +1,11 @@
-# [8-Week SQL Challenge](https://github.com/ndleah/8-Week-SQL-Challenge)
+# [8-Week SQL Challenge](https://github.com/rayale14/8-Week-SQL-Challenge) 
 ![Star Badge](https://img.shields.io/static/v1?label=%F0%9F%8C%9F&message=If%20Useful&style=style=flat&color=BC4E99)
-[![View Main Folder](https://img.shields.io/badge/View-Main_Folder-971901?)](https://github.com/ndleah/8-Week-SQL-Challenge)
-[![View Repositories](https://img.shields.io/badge/View-My_Repositories-blue?logo=GitHub)](https://github.com/ndleah?tab=repositories)
-[![View My Profile](https://img.shields.io/badge/View-My_Profile-green?logo=GitHub)](https://github.com/ndleah)
+[![View Main Folder](https://img.shields.io/badge/View-Main_Folder-971901?)](https://github.com/rayale14/8-Week-SQL-Challenge)
+[![View Repositories](https://img.shields.io/badge/View-My_Repositories-blue?logo=GitHub)](https://github.com/rayale14?tab=repositories)
+[![View My Profile](https://img.shields.io/badge/View-My_Profile-green?logo=GitHub)](https://github.com/rayale14)
 # 🪙 Case Study #4 - Data Bank
 <p align="center">
-<img src="https://github.com/ndleah/8-Week-SQL-Challenge/blob/main/IMG/org-4.png" width=40% height=40%>
+<img src="https://github.com/rayale14/8-Week-SQL-Challenge/blob/main/IMG/org-4.png" width=40% height=40%>
 
 
 ## 📕 Table Of Contents
@@ -108,7 +108,7 @@ This table stores all customer deposits, withdrawals and purchases made using th
 4. What is the closing balance for each customer at the end of the month?
 5. What is the percentage of customers who increase their closing balance by more than 5%?
 
-[![View Data Exploration Folder](https://img.shields.io/badge/View-Solution-971901?style=for-the-badge&logo=GITHUB)](https://github.com/ndleah/8-Week-SQL-Challenge/tree/main/Case%20Study%20%232%20-%20Pizza%20Runner/2.%20Runner%20and%20Customer%20Experience)
+
 
 ## 🚀 Solutions
 ### **A. Customer Nodes Exploration**
@@ -121,53 +121,17 @@ View solutions
 ### **Q1. How many unique nodes are there on the Data Bank system?**
 
 ```sql
-SELECT COUNT(DISTINCT node_id) AS node_counts
-FROM data_bank.customer_nodes;
 ```
-
-| "node_count" |
-|--------------|
-| 5            |
 
 ### **Q2. What is the number of nodes per region?**
 
 ```sql
-SELECT
-	regions.region_name,
-	COUNT(DISTINCT customer_nodes.node_id) AS node_counts
-FROM data_bank.regions
-INNER JOIN data_bank.customer_nodes
-ON regions.region_id = customer_nodes.region_id
-GROUP BY regions.region_name;
 ```
-
-| "region_name" | "node_counts" |
-|---------------|---------------|
-| "Africa"      | 5             |
-| "America"     | 5             |
-| "Asia"        | 5             |
-| "Australia"   | 5             |
-| "Europe"      | 5             |
 
 ### **Q3. How many customers are allocated to each region?**
 
 ```sql
-SELECT
-	regions.region_name,
-	COUNT(DISTINCT customer_nodes.customer_id) AS customer_counts
-FROM data_bank.regions
-INNER JOIN data_bank.customer_nodes
-ON regions.region_id = customer_nodes.region_id
-GROUP BY regions.region_name;
 ```
-
-| "region_name" | "customer_counts" |
-|---------------|-------------------|
-| "Africa"      | 102               |
-| "America"     | 105               |
-| "Asia"        | 95                |
-| "Australia"   | 110               |
-| "Europe"      | 88                |
 
 </details>
 
@@ -182,78 +146,19 @@ View solutions
 ### **Q1. 1. What is the unique count and total amount for each transaction type?**
 
 ```sql
-SELECT 
-	txn_type,
-	COUNT(txn_type) AS unique_count,
-	SUM(txn_amount) AS total_amount
-FROM data_bank.customer_transactions
-GROUP BY txn_type;
 ```
-
-| "txn_type"   | "unique_count" | "total_amount" |
-|--------------|----------------|----------------|
-| "purchase"   | 1617           | 806537         |
-| "withdrawal" | 1580           | 793003         |
-| "deposit"    | 2671           | 1359168        |
 
 
 ### **Q2. What is the average total historical deposit counts and amounts for all customers?**
 
 ```sql
-WITH cte_deposit AS (
-	SELECT 
-		customer_id,
-		COUNT(txn_type) AS deposit_count,
-		SUM(txn_amount) AS deposit_amount
-	FROM data_bank.customer_transactions
-	WHERE txn_type = 'deposit'
-	GROUP BY customer_id
-)
-SELECT 
-	AVG(deposit_count) AS avg_deposit_count,
-	AVG(deposit_amount) AS avg_deposit_amount
-FROM cte_deposit;
 ```
-
-| "avg_deposit_count" | "avg_deposit_amount"  |
-|---------------------|-----------------------|
-| 5.3420000000000000  | 2718.3360000000000000 |
 
 
 ### **Q3. For each month - how many Data Bank customers make more than 1 deposit and either 1 purchase or 1 withdrawal in a single month?**
 
 ```SQL
-WITH cte_customer AS (
-	SELECT
-		EXTRACT(MONTH FROM txn_date) AS month_part,
-		TO_CHAR(txn_date, 'Month') AS month,
-		customer_id,
-		SUM(CASE WHEN txn_type = 'deposit' THEN 1 ELSE 0 END) AS deposit_count,
-		SUM(CASE WHEN txn_type = 'purchase' THEN 1 ELSE 0 END) AS purchase_count,
-		SUM(CASE WHEN txn_type = 'withdrawal' THEN 1 ELSE 0 END) AS withdrawal_count
-	FROM data_bank.customer_transactions
-	GROUP BY
-		EXTRACT(MONTH FROM txn_date),
-		TO_CHAR(txn_date, 'Month'),
-		customer_id
-)
-SELECT 
-	month,
-	COUNT(customer_id) AS customer_count
-FROM cte_customer
-WHERE deposit_count > 1 AND (purchase_count >= 1 OR withdrawal_count >= 1)
-GROUP BY 
-	month_part,
-	month
-ORDER BY month_part;
 ```
-
-| "month"     | "customer_count" |
-|-------------|------------------|
-| "January  " | 168              |
-| "February " | 181              |
-| "March    " | 192              |
-| "April    " | 70               |
 
 
 </details>
