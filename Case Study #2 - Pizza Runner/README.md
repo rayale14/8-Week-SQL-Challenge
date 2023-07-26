@@ -264,36 +264,39 @@ Pizza Metrics
 
 ### **Q1. How many pizzas were ordered?**
 ```sql
-SELECT COUNT(*) AS pizza_count
-FROM updated_customer_orders;
+SELECT 
+    COUNT(order_id) AS no_pizzas
+FROM
+    customer_orders;
 ```
-|pizza_count|
+|no_pizzas  |
 |-----------|
 |14         |
 
 ### **Q2. How many unique customer orders were made?**
 ```sql
-SELECT COUNT (DISTINCT order_id) AS order_count
-FROM updated_customer_orders;
+SELECT 
+    COUNT(DISTINCT (order_id)) AS no_orders
+FROM
+    customer_orders;
 ```
-|order_count|
+|no_order   |
 |-----------|
 |10         |
 
 
 ### **Q3. How many successful orders were delivered by each runner?**
 ```sql
-SELECT
-  runner_id,
-  COUNT(order_id) AS successful_orders
-FROM updated_runner_orders
-WHERE cancellation IS NULL
-OR cancellation NOT IN ('Restaurant Cancellation', 'Customer Cancellation')
-GROUP BY runner_id
-ORDER BY successful_orders DESC;
+SELECT 
+    runner_id, COUNT(order_id) AS suc_orders
+FROM
+    runner_orders
+WHERE
+    cancellation NOT IN ('Restaurant Cancellation', 'Customer Cancellation')
+GROUP BY runner_id;
 ```
 
-| runner_id | successful_orders |
+| runner_id | suc_orders        |
 |-----------|-------------------|
 | 1         | 4                 |
 | 2         | 3                 |
@@ -302,78 +305,67 @@ ORDER BY successful_orders DESC;
 
 ### **Q4. How many of each type of pizza was delivered?**
 ```SQL
-SELECT
-  pn.pizza_name,
-  COUNT(co.*) AS pizza_type_count
-FROM updated_customer_orders AS co
-INNER JOIN pizza_runner.pizza_names AS pn
-   ON co.pizza_id = pn.pizza_id
-INNER JOIN pizza_runner.runner_orders AS ro
-   ON co.order_id = ro.order_id
-WHERE cancellation IS NULL
-OR cancellation NOT IN ('Restaurant Cancellation', 'Customer Cancellation')
-GROUP BY pn.pizza_name
-ORDER BY pn.pizza_name;
+SELECT 
+    co.pizza_id,
+    pn.pizza_name,
+    COUNT(co.pizza_id) AS delivered_pizzas
+FROM
+    customer_orders co
+        JOIN
+    pizza_names pn ON co.pizza_id = pn.pizza_id
+        JOIN
+    runner_orders ro ON ro.order_id = co.order_id
+WHERE
+    ro.cancellation NOT IN ('Restaurant Cancellation' , 'Customer Cancellation')
+GROUP BY 1
+ORDER BY 2 DESC;
 ```
-
-OR
-
-```SQL
-SELECT
-  pn.pizza_name,
-  COUNT(co.*) AS pizza_type_count
-FROM updated_customer_orders AS co
-INNER JOIN pizza_runner.pizza_names AS pn
-   ON co.pizza_id = pn.pizza_id
-WHERE EXISTS (
-  SELECT 1 FROM updated_runner_orders AS ro
-   WHERE ro.order_id = co.order_id
-   AND (
-    ro.cancellation IS NULL
-    OR ro.cancellation NOT IN ('Restaurant Cancellation', 'Customer Cancellation')
-  )
-)
-GROUP BY pn.pizza_name
-ORDER BY pn.pizza_name;
-```
-| pizza_name | pizza_type_count |
-|------------|------------------|
-| Meatlovers | 9                |
-| Vegetarian | 3                |
+|pizza_id| pizza_name | delivered_pizzas |
+|--------|------------|------------------|
+|2       | Vegetarian | 3                |
+|1       | Meatlovers | 9                |
 
 
 ### **Q5. How many Vegetarian and Meatlovers were ordered by each customer?**
 ```SQL
-SELECT
-  customer_id,
-  SUM(CASE WHEN pizza_id = 1 THEN 1 ELSE 0 END) AS meat_lovers,
-  SUM(CASE WHEN pizza_id = 2 THEN 1 ELSE 0 END) AS vegetarian
-FROM updated_customer_orders
-GROUP BY customer_id;
+SELECT 
+    customer_id,
+    SUM(CASE
+        WHEN pizza_id = 1 THEN 1
+        ELSE 0
+    END) AS Meat_Lovers,
+    SUM(CASE
+        WHEN pizza_id = 2 THEN 1
+        ELSE 0
+    END) AS Vegeterian
+FROM
+    customer_orders
+GROUP BY 1
+ORDER BY 1;
 ```
 
 | customer_id | meat_lovers | vegetarian |
 |-------------|-------------|------------|
 | 101         | 2           | 1          |
+| 102         | 2           | 1          |
 | 103         | 3           | 1          |
 | 104         | 3           | 0          |
 | 105         | 0           | 1          |
-| 102         | 2           | 1          |
 
 ### **Q6. What was the maximum number of pizzas delivered in a single order?**
 ```SQL
-SELECT MAX(pizza_count) AS max_count
-FROM (
-  SELECT
-    co.order_id,
-    COUNT(co.pizza_id) AS pizza_count
-  FROM updated_customer_orders AS co
-  INNER JOIN updated_runner_orders AS ro
-    ON co.order_id = ro.order_id
-  WHERE 
-    ro.cancellation IS NULL
-    OR ro.cancellation NOT IN ('Restaurant Cancellation', 'Customer Cancellation')
-  GROUP BY co.order_id) AS mycount;
+SELECT 
+    MAX(order_count) AS max_count
+FROM
+    (SELECT 
+        order_id, COUNT(pizza_id) AS order_count
+    FROM
+        customer_orders co
+    GROUP BY order_id) mc
+        JOIN
+    runner_orders ro ON ro.order_id = mc.order_id
+WHERE
+    cancellation NOT IN ('Restaurant Cancellation' , 'Customer Cancellation');
  ``` 
 
 | max_count |
@@ -384,77 +376,78 @@ FROM (
 ### **Q7. For each customer, how many delivered pizzas had at least 1 change and how many had no changes?**
 ```SQL
 SELECT 
-  co.customer_id,
-  SUM (CASE WHEN co.exclusions IS NOT NULL OR co.extras IS NOT NULL THEN 1 ELSE 0 END) AS changes,
-  SUM (CASE WHEN co.exclusions IS NULL OR co.extras IS NULL THEN 1 ELSE 0 END) AS no_change
-FROM updated_customer_orders AS co
-INNER JOIN updated_runner_orders AS ro
-  ON co.order_id = ro.order_id
-WHERE ro.cancellation IS NULL
-  OR ro.cancellation NOT IN ('Restaurant Cancellation', 'Customer Cancellation')
-GROUP BY co.customer_id
-ORDER BY co.customer_id;
+    customer_id,
+    SUM(CASE
+        WHEN exclusions OR extras IS NULL THEN 1
+        ELSE 0
+    END) AS no_change,
+    SUM(CASE
+        WHEN exclusions OR extras IS NOT NULL THEN 1
+        ELSE 0
+    END) changes
+FROM
+    customer_orders co
+        JOIN
+    runner_orders ro ON ro.order_id = co.order_id
+WHERE
+    cancellation NOT IN ('Restaurant Cancellation' , 'Customer Cancellation')
+GROUP BY 1;
 ```
 
-| customer_id | changes | no_change |
-|-------------|---------|-----------|
-| 101         | 0       | 2         |
-| 102         | 0       | 3         |
-| 103         | 3       | 3         |
-| 104         | 2       | 2         |
-| 105         | 1       | 1         |
+| customer_id | no_changes | changes   |
+|-------------|------------|-----------|
+| 101         | 0          | 2         |
+| 102         | 0          | 3         |
+| 103         | 3          | 3         |
+| 104         | 1          | 3         |
+| 105         | 0          | 1         |
 
 
 ### **Q8. How many pizzas were delivered that had both exclusions and extras?**
 ```SQL
-SELECT
-  SUM(CASE WHEN co.exclusions IS NOT NULL AND co.extras IS NOT NULL THEN 1 ELSE 0 END) as pizza_count
-FROM updated_customer_orders AS co
-INNER JOIN updated_runner_orders AS ro
+SELECT 
+  SUM(CASE WHEN exclusions != '' AND extras != '' THEN 1 ELSE 0 END) AS change_both
+FROM customer_orders co
+JOIN runner_orders ro 
   ON co.order_id = ro.order_id
-WHERE ro.cancellation IS NULL
-  OR ro.cancellation NOT IN ('Restaurant Cancellation', 'Customer Cancellation')
+WHERE ro.cancellation IS NULL OR ro.cancellation NOT IN ('Restaurant Cancellation', 'Customer Cancellation');
 ```  
 
-| pizza_count |
+| change_both |
 |-------------|
 | 1           |
 
 
 ### **Q9. What was the total volume of pizzas ordered for each hour of the day?**
 ```SQL
-SELECT
-  DATE_PART('hour', order_time::TIMESTAMP) AS hour_of_day,
-  COUNT(*) AS pizza_count
-FROM updated_customer_orders
-WHERE order_time IS NOT NULL
-GROUP BY hour_of_day
-ORDER BY hour_of_day;
+SELECT 
+    HOUR(order_time) as hour_of_day, COUNT(pizza_id) as no_pizzas
+FROM
+    customer_orders
+GROUP BY 1
+ORDER BY 1;
 ```
 
-| hour_of_day | pizza_count |
+| hour_of_day | no_pizza    |
 |-------------|-------------|
 | 11          | 1           |
-| 12          | 2           |
 | 13          | 3           |
 | 18          | 3           |
 | 19          | 1           |
 | 21          | 3           |
-| 23          | 1           |
+| 23          | 3           |
 
 ### **Q10. What was the volume of orders for each day of the week?**
 ```SQL
-SELECT
-  TO_CHAR(order_time, 'Day') AS day_of_week,
-  COUNT(*) AS pizza_count
-FROM updated_customer_orders
-GROUP BY 
-  day_of_week, 
-  DATE_PART('dow', order_time)
-ORDER BY day_of_week;
+SELECT 
+    DAYNAME(order_time) AS day_of_week, COUNT(pizza_id)
+FROM
+    customer_orders
+GROUP BY 1
+ORDER BY 1;
 ```
 
-| day_of_week | pizza_count |
+| day_of_week | no_pizza    |
 |-------------|-------------|
 | Friday      | 1           |
 | Saturday    | 5           |
@@ -470,110 +463,101 @@ Runner and Customer Experience
 
 ### **Q1. How many runners signed up for each 1 week period? (i.e. week starts 2021-01-01)**
 ```SQL
-WITH runner_signups AS (
-  SELECT
-    runner_id,
-    registration_date,
-    registration_date - ((registration_date - '2021-01-01') % 7)  AS start_of_week
-  FROM pizza_runner.runners
-)
-SELECT
-  start_of_week,
-  COUNT(runner_id) AS signups
-FROM runner_signups
-GROUP BY start_of_week
-ORDER BY start_of_week;
+SELECT 
+    WEEK(registration_date) as weeks, COUNT(runner_id) as signups
+FROM
+    runners
+GROUP BY 1;
 ```
 
-| start_of_week            | signups |
-|--------------------------|---------|
-| 2021-01-01T00:00:00.000Z | 2       |
-| 2021-01-08T00:00:00.000Z | 1       |
-| 2021-01-15T00:00:00.000Z | 1       |
+| week | signups |
+|------|---------|
+| 0    | 1       |
+| 1    | 2       |
+| 2    | 1       |
 
 ### **Q2. What was the average time in minutes it took for each runner to arrive at the Pizza Runner HQ to pickup the order?**
 ```SQL
-WITH runner_pickups AS (
+WITH runners_pickup AS (
   SELECT
     ro.runner_id,
-    ro.order_id,
-    co.order_time,
-    ro.pickup_time,
-    (pickup_time - order_time) AS time_to_pickup
-  FROM updated_runner_orders AS ro
-  INNER JOIN updated_customer_orders AS co
-    ON ro.order_id = co.order_id
-)
+    co.order_id, 
+    co.order_time, 
+    ro.pickup_time, 
+    TIMESTAMPDIFF(MINUTE, co.order_time, ro.pickup_time) AS pickup_minutes
+  FROM customer_orders co
+  JOIN runner_orders ro
+    ON co.order_id = ro.order_id
+WHERE ro.cancellation NOT IN ('Restaurant Cancellation' , 'Customer Cancellation')
+  GROUP BY 1,2,3,4)
+  
 SELECT 
   runner_id,
-  date_part('minutes', AVG(time_to_pickup)) AS avg_arrival_minutes
-FROM runner_pickups
-GROUP BY runner_id
-ORDER BY runner_id;
+  ROUND(AVG(pickup_minutes)) AS average_time
+FROM runners_pickup
+GROUP BY 1;
 ```
-| runner_id | avg_arrival_minutes |
+| runner_id | average_tine        |
 |-----------|---------------------|
-| 1         | -4                  |
-| 2         | 23                  |
+| 1         | 14                  |
+| 2         | 20                  |
 | 3         | 10                  |
 
 ### **Q3. Is there any relationship between the number of pizzas and how long the order takes to prepare?**
 ```SQL
-WITH order_count AS (
+WITH runners_pickup AS (
   SELECT
-    order_id,
-    order_time,
-    COUNT(pizza_id) AS pizzas_order_count
-  FROM updated_customer_orders
-  GROUP BY order_id, order_time
-), 
-prepare_time AS (
-  SELECT
-    ro.order_id,
-    co.order_time,
-    ro.pickup_time,
-    co.pizzas_order_count,
-    (pickup_time - order_time) AS time_to_pickup
-  FROM updated_runner_orders AS ro
-  INNER JOIN order_count AS co
-    ON ro.order_id = co.order_id
-  WHERE pickup_time IS NOT NULL
-)
-SELECT
-  pizzas_order_count,
-  AVG(time_to_pickup) AS avg_time
-FROM prepare_time
-GROUP BY pizzas_order_count
-ORDER BY pizzas_order_count;
+    ro.runner_id,
+    co.order_id, 
+    co.order_time, 
+    ro.pickup_time, 
+    TIMESTAMPDIFF(MINUTE, co.order_time, ro.pickup_time) AS pickup_minutes,
+    count(pizza_id) as no_orderd_pizza	
+  FROM customer_orders co
+  JOIN runner_orders ro
+    ON co.order_id = ro.order_id
+WHERE ro.cancellation NOT IN ('Restaurant Cancellation' , 'Customer Cancellation')
+  GROUP BY 1,2,3,4)
+  
+SELECT 
+  no_orderd_pizza,
+  ROUND(AVG(pickup_minutes)) AS average_time
+FROM runners_pickup
+GROUP BY 1;
 ```
 
-| pizzas_order_count | avg_time        |
+| no_order_pizza     | average_time    |
 |--------------------|-----------------|
 | 1                  | 12              |
-| 2                  | -6              |
+| 2                  | 18              |
 | 3                  | 29              |
+ 
+# Finding: If more data points were available, we could plot the data on a graph and analyze the trend to identify the relationship between pizzas and avg time  more clearly. Nonetheless, from the given data, we can only conclude that there is a positive correlation between the number of pizzas ordered and the average preparation time. More pizza, more average preparing time.
 
 ### **Q4. What was the average distance travelled for each runner?**
 ```SQL
-SELECT
-  runner_id,
-  ROUND(AVG(distance), 2) AS avg_distance
-FROM updated_runner_orders
-GROUP BY runner_id
-ORDER BY runner_id;
+SELECT 
+    co.customer_id, ROUND(AVG(ro.distance), 1) AS avg_distance
+FROM
+    runner_orders ro
+        JOIN
+    customer_orders co ON ro.order_id = co.order_id
+GROUP BY 1;
 ```
 
-| runner_id | avg_distance |
-|-----------|--------------|
-| 1         | 15.85        |
-| 2         | 23.93        |
-| 3         | 10.00        |
+| customer_id | avg_distance |
+|-------------|--------------|
+| 101         | 13.3         |
+| 102         | 16.7         |
+| 103         | 17.5         |
+| 104         | 10           |
+| 105         | 25           |
 
 ### **Q5. What was the difference between the longest and shortest delivery times for all orders?**
 ```SQL
 SELECT
   MAX(duration) - MIN(duration) AS difference
-FROM updated_runner_orders;
+FROM runner_orders;
 ```
 
 | difference |
@@ -582,67 +566,62 @@ FROM updated_runner_orders;
 
 ### **Q6. What was the average speed for each runner for each delivery and do you notice any trend for these values?**
 ```SQL
-WITH order_count AS (
-  SELECT
-    order_id,
-    order_time,
-    COUNT(pizza_id) AS pizzas_count
-  FROM updated_customer_orders
-  GROUP BY 
-    order_id, 
-    order_time
-)
-  SELECT
-    ro.order_id,
+SELECT 
     ro.runner_id,
-    co.pizzas_count,
+    ro.order_id,
     ro.distance,
     ro.duration,
-    ROUND(60 * ro.distance / ro.duration, 2) AS speed
-  FROM updated_runner_orders AS ro
-  INNER JOIN order_count AS co
-    ON ro.order_id = co.order_id
-  WHERE pickup_time IS NOT NULL
-  ORDER BY speed DESC
+    COUNT(co.pizza_id) AS no_pizzas,
+    ROUND(AVG(60 * ro.distance / ro.duration), 1) AS avg_speed
+FROM
+    customer_orders co
+        JOIN
+    runner_orders ro ON co.order_id = ro.order_id
+WHERE
+    ro.cancellation NOT IN ('Restaurant Cancellation' , 'Customer Cancellation')
+GROUP BY 1 , 2 , 3 , 4
+ORDER BY 1 , 2 , 6;
 ```
 
-| order_id | runner_id | pizzas_count | distance | duration | speed |
-|----------|-----------|--------------|----------|----------|-------|
-| 8        | 2         | 1            | 23.4     | 15       | 93.60 |
-| 7        | 2         | 1            | 25       | 25       | 60.00 |
-| 10       | 1         | 2            | 10       | 10       | 60.00 |
-| 2        | 1         | 1            | 20       | 27       | 44.44 |
-| 3        | 1         | 2            | 13.4     | 20       | 40.20 |
-| 5        | 3         | 1            | 10       | 15       | 40.00 |
-| 1        | 1         | 1            | 20       | 32       | 37.50 |
-| 4        | 2         | 3            | 23.4     | 40       | 35.10 |
+| runner_id | order_id  | distance  | duration | no_pizzas | avg_speed |
+|---------- |-----------|-----------|----------|-----------|-----------|
+| 1         | 1         | 20        | 32       | 1         | 37.5      |
+| 1         | 2         | 20        | 27       | 1         | 44.4      |
+| 1         | 3         | 13.4      | 20       | 2         | 40.2      |
+| 1         | 10        | 10        | 10       | 2         | 60        |
+| 2         | 4         | 23.4      | 40       | 3         | 35.1      |
+| 2         | 7         | 25        | 25       | 1         | 60        |
+| 2         | 8         | 23.4      | 15       | 1         | 93.6      |
+| 3         | 5         | 10        | 15       | 1         | 40        |
 
 **Finding:**
-- **Orders shown in decreasing order of average speed:**
-> *While the fastest order only carried 1 pizza and the slowest order carried 3 pizzas, there is no clear trend that more pizzas slow down the delivery speed of an order.*  
+- #NOTE: DURATION(MINUTE)
+- Runners had an average speed from 35.1 km/h to 44.4km/h,
+>*there is no clear trend that the number of pizzas affects the delivery speed of an order.*
+  
 
 ### **Q7. What is the successful delivery percentage for each runner?**
 ```sql
-SELECT
-  runner_id,
-  COUNT(pickup_time) as delivered,
-  COUNT(order_id) AS total,
-  ROUND(100 * COUNT(pickup_time) / COUNT(order_id)) AS delivery_percent
-FROM updated_runner_orders
-GROUP BY runner_id
-ORDER BY runner_id;
+SELECT 
+    runner_id,
+    COUNT(order_id) AS total_orders,
+    COUNT(pickup_time) AS suc_deliveries,
+    100 * COUNT(pickup_time) / COUNT(order_id) AS suc_pct
+FROM
+    runner_orders
+GROUP BY 1;
 ```
 
-| runner_id | delivered | total | delivery_percent |
-|-----------|-----------|-------|------------------|
-| 1         | 4         | 4     | 100              |
-| 2         | 3         | 4     | 75               |
-| 3         | 1         | 2     | 50               |
+| runner_id | total_orders | suc_deliveries| suc_pct          |
+|-----------|--------------|---------------|------------------|
+| 1         | 4            | 4             | 100              |
+| 2         | 4            | 3             | 75               |
+| 3         | 2            | 1             | 50               |
 
 
 </details>
 
-[![View Data Exploration Folder](https://img.shields.io/badge/View-Solution-971901?style=for-the-badge&logo=GITHUB)](https://github.com/ndleah/8-Week-SQL-Challenge/tree/main/Case%20Study%20%232%20-%20Pizza%20Runner/2.%20Runner%20and%20Customer%20Experience)
+[![View Data Exploration Folder]](https://github.com/rayale14/8-Week-SQL-Challenge/tree/main/Case%20Study%20%232%20-%20Pizza%20Runner/2.%20Runner%20and%20Customer%20Experience)
 
 ---
-<p>&copy; 2021 Leah Nguyen</p>
+<p>&copy; 2023 Duyen Le Huong <p>
